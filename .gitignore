@@ -1,0 +1,7 @@
+# Ignore compiled files
+*.beam
+
+# Ignore temp files created by some editors
+~*
+
+
