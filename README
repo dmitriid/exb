@@ -1,0 +1,21 @@
+So far this is just a proof-of-concept.
+
+1. Install exmpp, https://support.process-one.net/doc/display/EXMPP/Installation+guide
+   Or, simply, run
+      ./configure && make && sudo make install
+   in the deps/exmpp directory
+
+2. Run make in the exb directory
+
+3. Rename config.in to config. Set the appropriate options
+
+4. Run
+      erl -pz ebin
+
+5. Run
+      application:start().
+
+6. You can now "chat" to your bot (it will send back all you send to it)
+
+   That is, if your bot is set up to use bot@server.org, simply add this contact
+   to your contact list and chat away

@@ -1,0 +1,42 @@
+%%%%
+%%%% Global bot settings
+%%%%
+[
+	%%
+	%% Bot data, node@domain/resource
+	%% 
+
+	{node, "echo"},
+	{domain, "localhost"},
+	{resource, random},
+	
+	%%
+	%% Server data.	The bot will attempt to auhtenticate at this server
+	%%
+	
+	{server, "jabber.org"},
+	{port, 5222},
+	{password, ""},
+	
+	%%
+	%% auth data
+	%%
+	
+	{auth_type, auth_basic}, %% auth_basic or auth_basic_digest
+	{password, ""},
+	
+	%%
+	%% plugins
+	%% 
+	%% you may specify different plugins for different connections 
+	%% 
+	%% default plugins
+	%%     {default, [echo]}
+	%% plugins for a chat with "node@domain/resource"   
+	%%     {"node@domain/resource", [plugin1, plugin2]}
+	%%
+	
+	{plugins, [
+		{default, [echo]}
+	]}
+]

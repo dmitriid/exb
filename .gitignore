@@ -1,7 +1,19 @@
 # Ignore compiled files
 *.beam
+ebin/*
 
 # Ignore temp files created by some editors
 ~*
 
+# Ignore changes to exmpp folder (after ./configure and make)
+deps/exmpp/*
 
+# Ignore config files. May contain sensitive data
+config
+
+# Ignore erlang dump files
+erl_crash.dump
+
+# Ignore various IDE files, dirs and settings
+.project
+.settings
