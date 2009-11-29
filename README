@@ -13,7 +13,7 @@ So far this is just a proof-of-concept.
       erl -pz ebin
 
 5. Run
-      application:start().
+      application:start(exb).
 
 6. You can now "chat" to your bot (it will send back all you send to it)
 
