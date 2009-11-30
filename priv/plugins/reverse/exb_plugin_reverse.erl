@@ -38,9 +38,6 @@
 
 -spec(run/5 :: (any, any, list(), list(), list()) -> any).
 
-
-%% DOESN'T WORK YET. SETS WRONG BODY
-
 run(Packet, Session, _Args, Chain, _Config) ->
 	NewPacket = case exmpp_message:is_message(Packet) of 
 		true ->
