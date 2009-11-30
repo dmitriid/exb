@@ -28,15 +28,29 @@
 	%%
 	%% plugins
 	%% 
-	%% you may specify different plugins for different connections 
+
+	%% Plugin timeout in milliseconds
+	%% May be overriden by plugin config
+	%% Possible values:
+	%%     int()>=0 | infinity
+	{plugin_timeout, 1000}, 
+
+
+	%% You may specify different plugins for different connections 
 	%% 
 	%% default plugins
 	%%     {default, [echo]}
 	%% plugins for a chat with "node@domain/resource"   
 	%%     {"node@domain/resource", [plugin1, plugin2]}
 	%%
+	%% You may pass additional arguments to plugins:
+	%%     {default, [
+	%%                 {some_plugin, [Arg1, Arg2, Arg3]},
+	%%                 {other_plugin, [Arg4, Arg5]},
+	%%                 plugin_without_arguments,
+	%%     ]}
 	
 	{plugins, [
-		{default, [echo]}
+		{default, [echo, reverse]}
 	]}
-]
+].

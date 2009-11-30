@@ -15,7 +15,7 @@
 %% the License for the specific language governing rights and limitations
 %% under the License.
 
--module(exb_sup).
+-module(exb_plugin_sup).
 -author('Dmitrii Dimadt <dmitrii@dmitriid.com>').
 
 -behaviour(supervisor).
@@ -52,15 +52,23 @@ upgrade() ->
 %% @spec init([]) -> SupervisorTree
 %% @doc supervisor callback.
 init(Config) ->
-    
-    Exb = {exb,
-	            {exb, start, Config}, 
-	            permanent, 5000, worker, dynamic},
-	PluginSup = {exb_plugin_sup,
-				 {exb_plugin_sup, start_link, Config},
-				 permanent, infinity, supervisor, [exb_plugin_sup]},
-    Processes = [
-			PluginSup, Exb
-    ],
-    {ok, {{one_for_one, 1000, 10}, Processes}}.
+	PluginTimeout = proplists:get_value(plugin_timeout, Config, 1000),
+	AllPlugins = proplists:get_value(plugins, Config, []),
+	Plugins = plugins(AllPlugins),
+	
+	PluginProcesses = [
+					   plugin_process(Plugin, PluginTimeout) || Plugin <- Plugins
+					   ],
+	
+    {ok, {{one_for_one, 1000, 10}, PluginProcesses}}.
 
+plugins(PluginList) ->
+	Plugins = lists:flatten([
+	    [exb_utils:plugin_atom(P) || P <- Plugins] || {_ ,Plugins} <- PluginList 
+	]),
+	lists:usort(Plugins).
+
+plugin_process(Plugin, PluginTimeout) ->
+	{Plugin, 
+	 {exb_plugin, start_link, [[Plugin, PluginTimeout]]}, 
+	 permanent, 1000, worker, [exb_plugin]}.

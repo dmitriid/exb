@@ -21,13 +21,13 @@
 -include_lib("exmpp.hrl").
 -include_lib("exmpp_client.hrl").
 
--export([start/0, stop/1]).
--export([init/0]).
+-export([start/1, stop/1]).
+-export([init/1]).
 
--spec(start/0 :: () -> pid()).
+-spec(start/1 :: (list()) -> pid()).
 
-start() ->
-	init().
+start(Config) ->
+	init(Config).
     %%spawn(?MODULE, init, []).
 
 -spec(stop/1 :: (pid) -> any).
@@ -35,10 +35,7 @@ start() ->
 stop(EchoClientPid) ->
     EchoClientPid ! stop.
 
-init() ->
-	Config = filename:join([exb_utils:lib_dir(), "config"]),
-	Settings = exb_utils:read_settings(Config),
-	
+init(Settings) ->
 	Node     = proplists:get_value(node, Settings),
 	Domain   = proplists:get_value(domain, Settings),
 	Resource = proplists:get_value(resource, Settings, ""),

@@ -3,7 +3,8 @@
 	"src/*",
 	"priv/plugins/*",
 	"priv/plugins/*/*",
-	"priv/plugins/*/*/*"
+	"priv/plugins/*/*/*",
+	"priv/plugins/*/*/*/*"
  ], 
  [	{i, "include"},
 	{i, "deps/exmpp/include"},

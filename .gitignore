@@ -17,3 +17,5 @@ erl_crash.dump
 # Ignore various IDE files, dirs and settings
 .project
 .settings
+nbproject
+nbproject/*

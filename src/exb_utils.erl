@@ -21,7 +21,9 @@
 -export([
 		 lib_dir/0,
 		 lib_dir/1,
-		 read_settings/1
+		 plugin_dir/1,
+		 read_settings/1,
+		 plugin_atom/1
 ]).
 
 %%
@@ -41,11 +43,31 @@ lib_dir(Dir) ->
 	{ok, Path} = exb_app:get_path(),
 	filename:join([Path, Dir]).
 
+-spec(plugin_dir/1 :: (atom() | string()) -> string()).
+
+plugin_dir(Plugin) when is_atom(Plugin) ->
+	plugin_dir(atom_to_list(Plugin));
+plugin_dir(["exb_plugin_" | Plugin]) ->
+	plugin_dir(Plugin);
+plugin_dir(Plugin) ->
+	exb_utils:lib_dir("priv/plugins/" ++ Plugin).
+
 -spec(read_settings/1 :: (string()) -> list()).
 
 read_settings(FileName) ->
-	{ok, Binary} = file:read_file(FileName),
-    Config = binary_to_list(Binary),
-	{ok,Tokens,_} = erl_scan:string(Config),
-	{ok,Term} = erl_parse:parse_term(Tokens),
-	Term.
+	case file:read_file(FileName) of
+		{ok, Binary} ->
+		    Config = binary_to_list(Binary),
+			{ok,Tokens,_} = erl_scan:string(Config),
+			{ok,Term} = erl_parse:parse_term(Tokens),
+			Term;
+		_ ->
+			[]
+	end.
+
+-spec(plugin_atom/1 :: (atom() | list()) -> atom()).
+
+plugin_atom(Plugin) when is_atom(Plugin) ->
+	plugin_atom(atom_to_list(Plugin));
+plugin_atom(Plugin) ->
+	list_to_atom("exb_plugin_" ++ Plugin).

@@ -35,7 +35,11 @@ start(_Type, _StartArgs) ->
 	set_path(),
     ensure_started(exmpp),
 	reloader:start(),
-	exb_sup:start_link().
+	
+	Config = filename:join([exb_utils:lib_dir(), "config"]),
+	Settings = exb_utils:read_settings(Config),
+	
+	exb_sup:start_link([Settings]).
 
 %% @spec stop(_State) -> ServerRet
 %% @doc application stop callback for zotonic.

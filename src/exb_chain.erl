@@ -41,16 +41,16 @@
 -spec(plugin_chain/1 :: (list()) -> list()).
 
 plugin_chain(Plugins) ->
-	[{Name, create(Chain)} || {Name, Chain} <- Plugins].
+	[{Name, create_chain(PluginList)} || {Name, PluginList} <- Plugins].
 
 %%
 %% Local Functions
 %%
 
--spec(create/1 :: (list()) -> fun()).
+-spec(create_chain/1 :: (list()) -> fun()).
 
-create(Plugins) -> 
-	PluginAtoms = [plugin_atom(Plugin) || Plugin <- Plugins],
+create_chain(PluginList) -> 
+	PluginAtoms = [exb_utils:plugin_atom(Plugin) || Plugin <- PluginList],
 	F = fun(Request, Session) ->
 	        stack(Request, Session, PluginAtoms)
 	    end,
@@ -65,21 +65,18 @@ stack(Request, Session, [Plugin|T]) ->
 			stack(R, S, T)
 		end,
 	run(Plugin, Request, Session, F).
- 
+
 -spec(run/4 :: (any, any, any, fun()) -> any).
 
 run(Module, Request, Session, F) when is_atom(Module) ->
-	Module:run(Request, Session, [], F);
+	exb_plugin:run(Module, Request, Session, [], F);
+%	Module:run(Request, Session, [], F);
  
 run({Module}, Request, Session, F) ->
-	Module:run(Request, Session, [], F);
+	exb_plugin:run(Module, Request, Session, [], F);
+%	Module:run(Request, Session, [], F);
  
 run({Module, Options}, Request, Session, F) ->
-	Module:run(Request, Session, Options, F).
+	exb_plugin:run(Module, Request, Session, Options, F).
+%	Module:run(Request, Session, Options, F).
 
--spec(plugin_atom/1 :: (atom() | list()) -> atom()).
-
-plugin_atom(Plugin) when is_atom(Plugin) ->
-	plugin_atom(atom_to_list(Plugin));
-plugin_atom(Plugin) ->
-	list_to_atom("exb_plugin_" ++ Plugin).
