@@ -1,0 +1,12 @@
+echo plugin
+
+Decription
+===========
+Sets To: to From: and From: to To:
+
+This way the outgoing message goes back to the sender
+
+
+Commands
+============
+none

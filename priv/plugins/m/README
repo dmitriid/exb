@@ -1,0 +1,14 @@
+m plugin
+
+Decription
+===========
+Calls module_info(exports) on the specified module
+
+Commands
+============
+!m ModuleName
+
+Example (type in chat):
+--------
+!m pg2
+
