@@ -90,11 +90,11 @@ loop(MySession, PluginChain) ->
             exmpp_session:stop(MySession);
         %% If we receive a message, we reply with the same message
         Record = #received_packet{packet_type=message, raw_packet=Packet} ->
-            io:format("~p~n", [Record]),
+            %io:format("~p~n", [Record]),
             handle(MySession, Packet, PluginChain),
             loop(MySession, PluginChain);
         Record ->
-            io:format("~p~n", [Record]),
+            %io:format("~p~n", [Record]),
             loop(MySession, PluginChain)
     end.
 

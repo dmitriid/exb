@@ -45,7 +45,6 @@ run(Packet, Session, _Args, Chain, _Config) ->
     TmpPacket2 = exmpp_xml:set_attribute(TmpPacket, to, From),
     NewPacket = exmpp_xml:remove_attribute(TmpPacket2, id),
 	A = Chain(NewPacket, Session),
-	io:format("CHAIN!!!~p~n", [A]),
 	A.
 
 
