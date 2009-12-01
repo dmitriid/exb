@@ -1,4 +1,9 @@
-So far this is just a proof-of-concept.
+So far this is just a proof-of-concept. However, I'm trying to keep a *working*
+copy in the repo. That is, you should be able to clone the repo and get a working
+project to play with at any time.  
+
+Quick'n'dirty:
+===============
 
 1. Install exmpp, https://support.process-one.net/doc/display/EXMPP/Installation+guide
    Or, simply, run
@@ -19,3 +24,149 @@ So far this is just a proof-of-concept.
 
    That is, if your bot is set up to use bot@server.org, simply add this contact
    to your contact list and chat away
+   
+   
+More details
+============
+
+Running
+-------
+So far exb is a *standalone* exmpp bot. That is, you don't need to have a jabber
+server installed. In the future, hopefully, you ill be able to use exb as either
+a server component or a standalone bot.
+
+Config
+------
+Config options are pretty self-explanatory. If you don't know what a resource is,
+you may safely comment that line out.
+
+If you wish the bot to behave differently depending on conversation, you can make
+it use different sets of plugins for different people. In the config file:
+  [plugins,
+  	%% plugin1, plugin2, plugin3 used for everybody
+  	{default, [plugin1, plugin2, plugin3]},
+  	
+  	%% plugin2, plugin4 used for "user@server"
+  	{"user@server", [plugin2, plugin4]},
+
+  	%% plugin5 used for "user2@server2/resource"
+  	{"user2@server2/resource", [plugin5]},
+  ]
+
+Reloader
+--------
+exb includes mochiweb's extremely useful reloader server which monitors changes
+in your ebin directory. That is, you can have your code upgraded on the fly. Just
+type make:all() in your erl shell or make in your exb directory and watch reloader
+reload your changes. No need to quit the application.
+
+Plugins
+-------
+exb plugins currently act like middleware in such web-projects as Python's wsgi
+or Ruby's Rack. This means that you can chain as many plugins as you would like
+and work on both the request and the response.
+
+This works like this:
+
+remote user
+       |
+       |
+       V
+       plugin 1  (may modify incoming packet)
+              |
+              |
+              V
+              plugin 2  (may modify incoming packet)
+                     |
+                     |
+                     V
+                     ... (other plugins in a succession)
+                     |
+                     |
+                     V
+              plugin 2  (may modify the packet returned from chain above)
+              |
+              |
+              V
+       plugin 1  (may modify the packet returned from plugin 2)
+       |
+       |
+       V
+remote user
+
+exb includes several plugins, so you may examine the code for each one to see how
+this works.
+
+Developing your own plugin
+--------------------------
+Internally plugins are automatically wrapped in a gen_server behaviour (they will
+also be automatically load-balanced in the future). You, as a developer, don't
+have to worry about this so you can concentrate on implmenting the logic.
+
+Directory structure:
+exb/
+   |
+   priv
+      |
+      plugins
+            |
+            PluginName1
+            |         |
+            |         config (optional)
+            |         exb_plugin_PluginName1.erl
+            |
+            PluginName2
+                      |
+                      config (optional)
+                      exb_plugin_PluginName2.erl
+                      
+Each plugin should export a single run/5 function whose spec is as follows:
+  run(Packet, Session, Args, PluginChain, PluginConfig)
+  
+By default Args = PluginConfig = [].
+
+Packet is an incoming XMPP packet which may look as follows:
+
+	{xmlel,'jabber:client',[],message,
+	    [{xmlattr,undefined,from,<<"user@jabber.orgg/undefined">>},
+	     {xmlattr,undefined,to,<<"me@myserver.com/AdiumEC145AB1">>},
+	     {xmlattr,undefined,type,<<"chat">>}],
+	    [{xmlel,'http://jabber.org/protocol/chatstates',
+	         [{'http://jabber.org/protocol/chatstates',none}],
+	         active,[],[]},
+	     {xmlel,'jabber:client',[],body,[],[{xmlcdata,<<"hello">>}]},
+	     {xmlel,'http://jabber.org/protocol/xhtml-im',
+	         [{'http://jabber.org/protocol/xhtml-im',none}],
+	         html,[],
+	         [{xmlel,'http://www.w3.org/1999/xhtml',
+	              [{'http://www.w3.org/1999/xhtml',none}],
+	              body,[],
+	              [{xmlel,'http://www.w3.org/1999/xhtml',[],"span",
+	                   [{xmlattr,undefined,"style",
+	                        <<"font-family: Helvetica; font-size: medium; background: #ffffff;">>}],
+	                   [{xmlcdata,<<"hello">>}]}]}]},
+	     {xmlel,"google:nosave",
+	         [{"google:nosave","nos"}],
+	         x,
+	         [{xmlattr,undefined,value,<<"disabled">>}],
+	         []},
+	     {xmlel,"http://jabber.org/protocol/archive",
+	         [{"http://jabber.org/protocol/archive","arc"}],
+	         "record",
+	         [{xmlattr,undefined,otr,<<"false">>}],
+	         []}]}
+
+Refer to XMPP and exmpp docs for more info.
+
+You may now modify the incoming packet as you wish. Once you modify the packet,
+you SHOULD pass it on to the PluginChain. The entire workflow looks like this:
+
+	run(Packet, Session, Args, PluginChain, PluginConfig) ->
+	    NewPacket1 = optionally_modify_the_incoming_packet(Packet),
+	    NewPacket2 = PluginChain(Packet),
+	    NewPacket3 = optionally_modify_the_response(NewPacket2),
+	    NewPacket3. %% return the modified packet
+	
+
+*NOTE*: The plugin interface is subject to change (most likely, the order of arguments
+will change)
