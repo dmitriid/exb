@@ -24,6 +24,10 @@
 -export([start/1, stop/1]).
 -export([init/1]).
 
+%
+% @doc Starts the exb bot with configuration values from the exb/config file
+%
+
 -spec(start/1 :: (list()) -> pid()).
 
 start(Config) ->
@@ -34,6 +38,13 @@ start(Config) ->
 
 stop(EchoClientPid) ->
     EchoClientPid ! stop.
+
+%
+% @doc Initiates an XMPP session, logins or registers the user, starts the event
+%      loop
+%
+
+-spec(init/1 :: (list()) -> any()).
 
 init(Settings) ->
 	Node     = proplists:get_value(node, Settings),

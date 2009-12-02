@@ -14,6 +14,9 @@ config
 # Ignore erlang dump files
 erl_crash.dump
 
+# Ignore MacOS X Desktop Services Store files
+.DS_Store
+
 # Ignore various IDE files, dirs and settings
 .project
 .settings

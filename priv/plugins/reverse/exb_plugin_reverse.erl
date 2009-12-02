@@ -16,6 +16,17 @@
 %% @doc
 %% The module <strong>{@module}</strong> is a simple reverse plugin.
 %%
+%% <h3>Description</h3>
+%% It will reverse any incoming string. The plugin is unicode-aware
+%% 
+%% <h3>Commands</h3>
+%% None
+%% 
+%% <h3>Example chat session:</h3>
+%% <pre>
+%% User: hello
+%% Bot: olleh
+%% </pre>
 
 -module(exb_plugin_reverse).
 
@@ -29,7 +40,6 @@
 %% Exported Functions
 %%
 -export([run/5]).
--compile(export_all).
 
 %%
 %% API Functions

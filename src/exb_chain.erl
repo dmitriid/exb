@@ -38,6 +38,18 @@
 %% API Functions
 %%
 
+%
+% @doc Creates a chain of plugins
+%
+% <strong>Usage:</strong>
+% <pre><code lang="erlang">
+% &gt; exb_chain:plugin_chain([{default, [plugin1, plugin2, plugin3]}]).
+% [{default,#Fun&lt;exb_chain.0.64534256&gt;}]</code></pre>
+%
+% The resulting function is a continuation-passing style function. When invoked
+% it calls the next plugin in chain and passes to it a new function which will
+% call the next plugin in chain etc.
+
 -spec(plugin_chain/1 :: (list()) -> list()).
 
 plugin_chain(Plugins) ->
@@ -46,6 +58,12 @@ plugin_chain(Plugins) ->
 %%
 %% Local Functions
 %%
+
+
+% @doc Handles the actual creation of the chain of plugins
+%
+% Creates a continuation passing style function to call each plugin in succession
+
 
 -spec(create_chain/1 :: (list()) -> fun()).
 
@@ -56,6 +74,8 @@ create_chain(PluginList) ->
 	    end,
 	F.
 
+% @doc Creates the CPS function and calls the current plugin
+
 -spec(stack/3 :: (any, any, list()) -> any).
 
 stack(Request, _Session, []) ->
@@ -65,6 +85,8 @@ stack(Request, Session, [Plugin|T]) ->
 			stack(R, S, T)
 		end,
 	run(Plugin, Request, Session, F).
+
+% @doc Runs the current plugin
 
 -spec(run/4 :: (any, any, any, fun()) -> any).
 

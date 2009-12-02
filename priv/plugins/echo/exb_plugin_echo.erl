@@ -16,7 +16,21 @@
 %% @doc
 %% The module <strong>{@module}</strong> is a simple echo plugin.
 %%
-
+%% <h3>Description</h3>
+%% It swaps "To:" and "From:" fields in an XMPP request to make sure that the outgoing
+%% response will go back to the user that initiates the chat.
+%%
+%% It should be placed <strong>before</strong> any other plugn that modifies the 
+%% request
+%% 
+%% <h3>Commands</h3>
+%% None
+%% 
+%% <h3>Example chat session:</h3>
+%% <pre>
+%% User: hello
+%% Bot: hello
+%% </pre>
 -module(exb_plugin_echo).
 
 %%
@@ -30,10 +44,6 @@
 
 %%
 %% API Functions
-%%
-
-%%
-%% TODO: Add description of run/function_arity
 %%
 
 -spec(run/5 :: (any, any, list(), list(), list()) -> any).

@@ -2,6 +2,7 @@ ERL          ?= erl
 ERLC          = erlc
 EBIN_DIRS    := $(wildcard deps/*/ebin)
 APP          := exb
+DOCPATH      := doc
 
 all: exmpp erl ebin/$(APP).app 
 
@@ -14,7 +15,7 @@ exmpp:
 #	(cd deps/exmpp; make)
 
 docs:
-	@erl -noshell -run edoc_run application '$(APP)' '"."' '[]'
+	@erl -noshell -eval 'edoc:application(exb, ".", [{source_path, ["src", "priv"]}, {packages, false}]).'
 
 clean: 
 	@echo "removing:"

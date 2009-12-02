@@ -26,7 +26,6 @@
 %% supervisor callbacks
 -export([init/1]).
 
-%% @spec start_link() -> ServerRet
 %% @doc API for starting the supervisor.
 start_link(Config) ->
     supervisor:start_link({local, ?MODULE}, ?MODULE, Config).
@@ -49,7 +48,6 @@ upgrade() ->
     [supervisor:start_child(?MODULE, Spec) || Spec <- Specs],
     ok.
 
-%% @spec init([]) -> SupervisorTree
 %% @doc supervisor callback.
 init(Config) ->
 	PluginTimeout = proplists:get_value(plugin_timeout, Config, 1000),

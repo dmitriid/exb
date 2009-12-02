@@ -30,7 +30,7 @@
 %% API Functions
 %%
 
-%% @doc Return an abspath to a directory relative to the application root.
+%% @doc Return path to the application root.
 %% Adapted from Zotonic CMS
 
 -spec(lib_dir/0 :: () -> string()).
@@ -39,9 +39,21 @@
 lib_dir() ->
 	{ok, Path} = exb_app:get_path(),
 	Path.
+
+%% @doc Return an abspath to a directory relative to the application root.
+
 lib_dir(Dir) ->
 	{ok, Path} = exb_app:get_path(),
 	filename:join([Path, Dir]).
+
+%% @doc Return an abspath to a directory containing the plugin.
+%
+% <strong>Usage:</strong>
+% <pre><code lang="erlang">
+% > exb_utils:plugin_dir(echo).
+% > exb_utils:plugin_dir(exb_plugin_echo).
+% </code></pre>
+%
 
 -spec(plugin_dir/1 :: (atom() | string()) -> string()).
 
@@ -52,6 +64,8 @@ plugin_dir(["exb_plugin_" | Plugin]) ->
 plugin_dir(Plugin) ->
 	exb_utils:lib_dir("priv/plugins/" ++ Plugin).
 
+%% @doc Read and parse a config file. The file must be in a valid Erlang syntax
+%
 -spec(read_settings/1 :: (string()) -> list()).
 
 read_settings(FileName) ->
@@ -67,6 +81,9 @@ read_settings(FileName) ->
 
 -spec(plugin_atom/1 :: (atom() | list()) -> atom()).
 
+% @doc Convert short plugin name (such as "echo") to a fully qualified name
+%      (such as exb_plugin_echo)
+%
 plugin_atom(Plugin) when is_atom(Plugin) ->
 	plugin_atom(atom_to_list(Plugin));
 plugin_atom(Plugin) ->

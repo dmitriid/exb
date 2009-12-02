@@ -21,6 +21,8 @@
 -behaviour(application).
 -export([start/2, stop/1, get_path/0]).
 
+-spec(ensure_started/1 :: (atom()) -> ok).
+
 ensure_started(App) ->
     case application:start(App) of
 	ok ->
@@ -29,8 +31,10 @@ ensure_started(App) ->
 	    ok
     end.
 
-%% @spec start(_Type, _StartArgs) -> ServerRet
-%% @doc application start callback for zotonic.
+%% @doc Application start callback.
+
+-spec(start/2 :: (any(), any()) -> {ok, pid()}).
+
 start(_Type, _StartArgs) ->
 	set_path(),
     ensure_started(exmpp),
@@ -41,15 +45,28 @@ start(_Type, _StartArgs) ->
 	
 	exb_sup:start_link([Settings]).
 
-%% @spec stop(_State) -> ServerRet
-%% @doc application stop callback for zotonic.
+%% @doc Application stop callback.
+
+-spec(stop/1 :: (any()) -> ok).
+
 stop(_State) ->
     ok.
+
+%
+% @doc Sets the environment variable lib_dir to application directory path
+%
+-spec(set_path/0 :: () -> any()).
 
 set_path() ->
 	P = code:all_loaded(),
 	Path = filename:dirname(filename:dirname(proplists:get_value(?MODULE, P))),
 	application:set_env(exb, lib_dir, Path).
+
+%
+% @doc Retrieves the application directory path
+%
+
+-spec(get_path/0 :: () -> string()).
 
 get_path() ->
 	application:get_env(exb, lib_dir).
