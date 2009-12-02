@@ -59,10 +59,12 @@ lib_dir(Dir) ->
 
 plugin_dir(Plugin) when is_atom(Plugin) ->
 	plugin_dir(atom_to_list(Plugin));
-plugin_dir(["exb_plugin_" | Plugin]) ->
-	plugin_dir(Plugin);
 plugin_dir(Plugin) ->
-	exb_utils:lib_dir("priv/plugins/" ++ Plugin).
+	P = case list_to_binary(Plugin) of
+		<<"exb_plugin_", ShortName/binary>> -> binary_to_list(ShortName);
+		_ -> Plugin
+	end,
+	exb_utils:lib_dir("priv/plugins/" ++ P).
 
 %% @doc Read and parse a config file. The file must be in a valid Erlang syntax
 %

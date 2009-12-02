@@ -1,4 +1,5 @@
 {application,exb}.
 {packages,[]}.
-{modules,[exb,exb_app,exb_chain,exb_plugin,exb_plugin_echo,exb_plugin_m,
-          exb_plugin_reverse,exb_plugin_sup,exb_sup,exb_utils,reloader]}.
+{modules,[exb,exb_app,exb_chain,exb_plugin,exb_plugin_echo,exb_plugin_log,
+          exb_plugin_m,exb_plugin_reverse,exb_plugin_sup,exb_sup,exb_utils,
+          reloader]}.

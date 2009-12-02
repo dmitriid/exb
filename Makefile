@@ -15,7 +15,7 @@ exmpp:
 #	(cd deps/exmpp; make)
 
 docs:
-	@erl -noshell -eval 'edoc:application(exb, ".", [{source_path, ["src", "priv"]}, {packages, false}]).'
+	@erl -noshell -eval 'edoc:application(exb, ".", [{source_path, ["src", "priv"]}, {packages, false}]).' -s init stop
 
 clean: 
 	@echo "removing:"

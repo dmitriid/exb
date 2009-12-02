@@ -49,13 +49,14 @@
 -spec(run/5 :: (any, any, list(), list(), list()) -> any).
 
 run(Packet, Session, _Args, Chain, _Config) -> 
-	From = exmpp_xml:get_attribute(Packet, from, <<"unknown">>),
-    To = exmpp_xml:get_attribute(Packet, to, <<"unknown">>),
-    TmpPacket = exmpp_xml:set_attribute(Packet, from, To),
+	NewPacket = Chain(Packet, Session),
+	From = exmpp_xml:get_attribute(NewPacket, from, <<"unknown">>),
+    To = exmpp_xml:get_attribute(NewPacket, to, <<"unknown">>),
+    TmpPacket = exmpp_xml:set_attribute(NewPacket, from, To),
     TmpPacket2 = exmpp_xml:set_attribute(TmpPacket, to, From),
-    NewPacket = exmpp_xml:remove_attribute(TmpPacket2, id),
-	A = Chain(NewPacket, Session),
-	A.
+    NewPacket1 = exmpp_xml:remove_attribute(TmpPacket2, id),
+	exmpp_session:send_packet(Session, NewPacket1),
+	NewPacket1.
 
 
 %%

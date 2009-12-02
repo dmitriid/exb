@@ -100,22 +100,21 @@ loop(MySession, PluginChain) ->
         stop ->
             exmpp_session:stop(MySession);
         %% If we receive a message, we reply with the same message
-        Record = #received_packet{packet_type=message, raw_packet=Packet} ->
+        _Record = #received_packet{packet_type=message, raw_packet=Packet} ->
             %io:format("~p~n", [Record]),
             handle(MySession, Packet, PluginChain),
             loop(MySession, PluginChain);
-        Record ->
+        _Record ->
             %io:format("~p~n", [Record]),
             loop(MySession, PluginChain)
     end.
 
 %% Send the same packet back for each message received
-handle(MySession, Packet, PluginChain) ->
+handle(Session, Packet, PluginChain) ->
     From = exmpp_xml:get_attribute(Packet, from, <<"unknown">>),
 	Plugin = proplists:get_value(From, PluginChain, proplists:get_value(default, PluginChain)),
-	NewPacket =
 	try
-		Plugin(Packet, MySession)
+		Plugin(Packet, Session)
 	catch
 		Any:Reason ->
 		    From = exmpp_xml:get_attribute(Packet, from, <<"unknown">>),
@@ -123,14 +122,6 @@ handle(MySession, Packet, PluginChain) ->
     		TmpPacket = exmpp_xml:set_attribute(Packet, from, To),
     		TmpPacket2 = exmpp_xml:set_attribute(TmpPacket, to, From),
     		NewPacket1 = exmpp_xml:remove_attribute(TmpPacket2, id),
-			exmpp_xml:set_cdata(NewPacket1, <<"error",$\n,Any,$\n,Reason>>)
-	end,
-    exmpp_session:send_packet(MySession, NewPacket).
-
-echo(MySession, Packet, _) ->
-    From = exmpp_xml:get_attribute(Packet, from, <<"unknown">>),
-    To = exmpp_xml:get_attribute(Packet, to, <<"unknown">>),
-    TmpPacket = exmpp_xml:set_attribute(Packet, from, To),
-    TmpPacket2 = exmpp_xml:set_attribute(TmpPacket, to, From),
-    NewPacket = exmpp_xml:remove_attribute(TmpPacket2, id),
-    exmpp_session:send_packet(MySession, NewPacket).
+			exmpp_xml:set_cdata(NewPacket1, <<"error",$\n,Any,$\n,Reason>>),
+			exmpp_session:send_packet(Session, NewPacket1)
+	end.
